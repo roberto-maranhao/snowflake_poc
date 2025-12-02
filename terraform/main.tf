@@ -12,7 +12,7 @@ terraform {
 # Configure the Snowflake Provider
 provider "snowflake" {
   account_name      = var.snowflake_account_name
-  organization_name = var.snowflake_organization_name
+  organization_name = var.snowflake_organization_name != "" ? var.snowflake_organization_name : null
   user              = var.snowflake_username
   password          = var.snowflake_password
   role              = var.snowflake_role
@@ -43,6 +43,7 @@ variable "snowflake_password" {
 variable "snowflake_role" {
   description = "Snowflake role"
   type        = string
+  default     = "TERRAFORM_DEV_ROLE"
 }
 
 variable "snowflake_region" {

@@ -41,22 +41,16 @@ jobs:
     - name: Validate Secrets
       run: |
         echo "Checking if required secrets are available..."
-        if [ -z "$TF_VAR_snowflake_account_name" ]; then echo "ERROR: SNOWFLAKE_DEV_ACCOUNT_NAME secret not set"; exit 1; fi
-        if [ -z "$TF_VAR_snowflake_organization_name" ]; then echo "ERROR: SNOWFLAKE_DEV_ORGANIZATION_NAME secret not set"; exit 1; fi
+        if [ -z "$TF_VAR_snowflake_account_name" ]; then echo "ERROR: SNOWFLAKE_DEV_ACCOUNT secret not set"; exit 1; fi
         if [ -z "$TF_VAR_snowflake_username" ]; then echo "ERROR: SNOWFLAKE_DEV_USERNAME secret not set"; exit 1; fi
         if [ -z "$TF_VAR_snowflake_password" ]; then echo "ERROR: SNOWFLAKE_DEV_PASSWORD secret not set"; exit 1; fi
-        if [ -z "$TF_VAR_snowflake_role" ]; then echo "ERROR: SNOWFLAKE_DEV_ROLE secret not set"; exit 1; fi
         echo "All required secrets are available"
       env:
-        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT_NAME }}
-        TF_VAR_snowflake_organization_name: ${{ secrets.SNOWFLAKE_DEV_ORGANIZATION_NAME }}
+        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT }}
+        TF_VAR_snowflake_organization_name: ""
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_DEV_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_DEV_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_DEV_ROLE }}
-    
-    - name: Terraform Init
-      run: terraform init
-    
+        TF_VAR_snowflake_role: "TERRAFORM_DEV_ROLE"    
     - name: Terraform Validate
       run: terraform validate
     
@@ -69,11 +63,11 @@ jobs:
         TF_VAR_warehouse_name: "COMPUTE_WH_DEV"
         TF_VAR_warehouse_size: "X-SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
-        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT_NAME }}
-        TF_VAR_snowflake_organization_name: ${{ secrets.SNOWFLAKE_DEV_ORGANIZATION_NAME }}
+        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT }}
+        TF_VAR_snowflake_organization_name: ""
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_DEV_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_DEV_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_DEV_ROLE }}
+        TF_VAR_snowflake_role: "TERRAFORM_DEV_ROLE"
     
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
@@ -83,8 +77,8 @@ jobs:
         TF_VAR_warehouse_name: "COMPUTE_WH_DEV"
         TF_VAR_warehouse_size: "X-SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
-        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT_NAME }}
-        TF_VAR_snowflake_organization_name: ${{ secrets.SNOWFLAKE_DEV_ORGANIZATION_NAME }}
+        TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT }}
+        TF_VAR_snowflake_organization_name: ""
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_DEV_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_DEV_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_DEV_ROLE }}
+        TF_VAR_snowflake_role: "TERRAFORM_DEV_ROLE"
