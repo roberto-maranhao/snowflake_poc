@@ -38,15 +38,24 @@ jobs:
     - name: Terraform Format Check
       run: terraform fmt -check -recursive
     
-    - name: Terraform Init
+    - name: Validate Secrets
       run: |
-        terraform init
+        echo "Checking if required secrets are available..."
+        if [ -z "$TF_VAR_snowflake_account_name" ]; then echo "ERROR: SNOWFLAKE_DEV_ACCOUNT_NAME secret not set"; exit 1; fi
+        if [ -z "$TF_VAR_snowflake_organization_name" ]; then echo "ERROR: SNOWFLAKE_DEV_ORGANIZATION_NAME secret not set"; exit 1; fi
+        if [ -z "$TF_VAR_snowflake_username" ]; then echo "ERROR: SNOWFLAKE_DEV_USERNAME secret not set"; exit 1; fi
+        if [ -z "$TF_VAR_snowflake_password" ]; then echo "ERROR: SNOWFLAKE_DEV_PASSWORD secret not set"; exit 1; fi
+        if [ -z "$TF_VAR_snowflake_role" ]; then echo "ERROR: SNOWFLAKE_DEV_ROLE secret not set"; exit 1; fi
+        echo "All required secrets are available"
       env:
         TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT_NAME }}
         TF_VAR_snowflake_organization_name: ${{ secrets.SNOWFLAKE_DEV_ORGANIZATION_NAME }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_DEV_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_DEV_PASSWORD }}
         TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_DEV_ROLE }}
+    
+    - name: Terraform Init
+      run: terraform init
     
     - name: Terraform Validate
       run: terraform validate
