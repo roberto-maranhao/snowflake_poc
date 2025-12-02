@@ -38,46 +38,47 @@ You need to add the following secrets to your GitHub repository. Go to:
 
 ---
 
-## 👥 Production Approval Configuration
+## 🔐 Production Protection Setup
 
-Production deployments require manual approval for security and compliance. This prevents accidental deployments to your production Snowflake environment.
+**Use GitHub's built-in branch protection instead of custom approval secrets!**
 
-### 7. PROD_APPROVERS
-- **Value**: `your-github-username` (or comma-separated list of GitHub usernames)
-- **Examples**: 
-  - Single approver: `roberto-maranhao`
-  - Multiple approvers: `roberto-maranhao,john.doe,jane.smith`
-  - Team leads: `data-team-lead,devops-manager,cto`
+### Option 1: Branch Protection Rules (Recommended)
 
-### 🔐 How Production Approval Works
+1. **Go to Repository Settings**:
+   - Navigate to **Settings → Branches**
+   - Click **Add rule** or **Add protection rule**
 
-1. **PR Created**: When a PR is created against the `production` branch
-2. **Terraform Plan**: GitHub Actions runs `terraform plan` automatically
-3. **Manual Approval Required**: Workflow pauses and creates an approval issue
-4. **Notification**: GitHub notifies the specified approvers
-5. **Review & Approve**: Approvers review the plan and approve/reject
-6. **Deploy**: Only after approval, `terraform apply` executes
+2. **Configure Protection Rule**:
+   - **Branch name pattern**: `production`
+   - ✅ **Require a pull request before merging**
+   - ✅ **Require reviews before merging** (set to 1 or more)
+   - ✅ **Dismiss stale PR reviews when new commits are pushed**
+   - ✅ **Restrict pushes that create files larger than 100MB**
+   - ✅ **Require status checks to pass before merging**
 
-### 👥 Approval Requirements
+3. **Add Required Reviewers**:
+   - Add specific GitHub usernames
+   - Or create a team and require team review
 
-- **Minimum Approvals**: 1 (configurable in workflow)
-- **Who Can Approve**: Only GitHub usernames listed in `PROD_APPROVERS`
-- **Timeout**: 24 hours (workflow fails if no approval)
-- **Emergency Override**: Repository admins can always approve
+### Option 2: GitHub Environments (Also Great)
 
-### 📋 Best Practices for Approvers
+1. **Go to Repository Settings**:
+   - Navigate to **Settings → Environments**
+   - Click **New environment**
 
-- **Data Team Lead**: Review schema and data model changes
-- **DevOps Manager**: Review infrastructure and security implications  
-- **Database Administrator**: Review permissions and performance impact
-- **Security Officer**: Review compliance and security aspects
+2. **Create Production Environment**:
+   - **Name**: `production`
+   - ✅ **Required reviewers**: Add GitHub usernames or teams
+   - ✅ **Wait timer**: Optional delay before deployment
+   - ✅ **Deployment branches**: Only `production` branch
 
-### ⚠️ Important Security Notes
+### 🎯 Benefits of GitHub Native Protection
 
-- Approvers must have **read access** to the repository
-- Approvers should review the **Terraform plan output** before approving
-- Use **team-based approvers** rather than individual usernames when possible
-- Consider **requiring multiple approvals** for critical production changes
+- ✅ **More secure**: Built into GitHub's security model
+- ✅ **Better audit trail**: Clear record of who approved what
+- ✅ **Team integration**: Works with GitHub teams and permissions
+- ✅ **No secret management**: No need to maintain approver lists in secrets
+- ✅ **Native UI**: Approvals happen in the GitHub PR interface
 
 ---
 
@@ -102,10 +103,9 @@ After adding all secrets, verify you have:
 - [ ] SNOWFLAKE_DEV_PASSWORD
 - [ ] SNOWFLAKE_PROD_ACCOUNT
 - [ ] SNOWFLAKE_PROD_USERNAME
-- [ ] SNOWFLAKE_PROD_PASSWORD  
-- [ ] PROD_APPROVERS
+- [ ] SNOWFLAKE_PROD_PASSWORD
 
-**Total: 7 secrets**
+**Total: 6 secrets**
 
 ---
 
@@ -114,7 +114,10 @@ After adding all secrets, verify you have:
 After configuring secrets:
 
 1. **Execute the SQL setup scripts** in Snowflake (if not done already)
-2. **Create development and production branches**:
+
+2. **Set up branch protection** (choose one option above)
+
+3. **Create development and production branches**:
    ```bash
    git checkout -b development
    git push -u origin development
@@ -123,7 +126,7 @@ After configuring secrets:
    git push -u origin production
    ```
 
-3. **Test with a PR** to the development branch to verify the automation works
+4. **Test with a PR** to verify the automation and protection works
 
 ---
 

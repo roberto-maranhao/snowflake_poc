@@ -51,15 +51,6 @@ jobs:
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
     
-    - name: Manual Approval Required
-      uses: trstringer/manual-approval@v1
-      with:
-        secret: ${{ github.TOKEN }}
-        approvers: ${{ secrets.PROD_APPROVERS }}
-        minimum-approvals: 1
-        issue-title: "Production Deployment Approval Required"
-        issue-body: "Please review the Terraform plan and approve this production deployment."
-    
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
       env:
