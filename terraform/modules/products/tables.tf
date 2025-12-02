@@ -50,9 +50,12 @@ resource "snowflake_table" "products" {
       constant = "CURRENT_TIMESTAMP()"
     }
   }
+}
 
-  primary_key {
-    name = "PK_PRODUCTS"
-    keys = ["ID"]
-  }
+# Primary key constraint on products table
+resource "snowflake_table_constraint" "products_primary_key" {
+  name     = "PK_PRODUCTS"
+  type     = "PRIMARY KEY"
+  table_id = "${var.database_name}.${var.schema_name}.${snowflake_table.products.name}"
+  columns  = ["ID"]
 }

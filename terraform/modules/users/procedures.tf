@@ -32,7 +32,7 @@ resource "snowflake_procedure" "create_user" {
         END IF;
         
         -- Insert new user
-        INSERT INTO ${snowflake_table.users.qualified_name} (EMAIL, FIRST_NAME, LAST_NAME)
+        INSERT INTO ${var.database_name}.${var.schema_name}.${snowflake_table.users.name} (EMAIL, FIRST_NAME, LAST_NAME)
         VALUES (EMAIL_PARAM, FIRST_NAME_PARAM, LAST_NAME_PARAM);
         
         -- Return the new user ID

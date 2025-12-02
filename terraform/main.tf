@@ -3,24 +3,29 @@ terraform {
   
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.87"
+      source  = "snowflakedb/snowflake"
+      version = "~> 0.96"
     }
   }
 }
 
-# Configure the Snowflake provider
+# Configure the Snowflake Provider
 provider "snowflake" {
-  account   = var.snowflake_account
-  username  = var.snowflake_username
-  password  = var.snowflake_password
-  role      = var.snowflake_role
-  region    = var.snowflake_region
+  account_name      = var.snowflake_account_name
+  organization_name = var.snowflake_organization_name
+  user              = var.snowflake_username
+  password          = var.snowflake_password
+  role              = var.snowflake_role
 }
 
 # Variables
-variable "snowflake_account" {
-  description = "Snowflake account identifier"
+variable "snowflake_account_name" {
+  description = "Snowflake account name"
+  type        = string
+}
+
+variable "snowflake_organization_name" {
+  description = "Snowflake organization name"
   type        = string
 }
 

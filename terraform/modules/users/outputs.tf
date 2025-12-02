@@ -5,7 +5,7 @@ output "users_table" {
 
 output "users_table_name" {
   description = "Full qualified name of users table"
-  value       = snowflake_table.users.qualified_name
+  value       = snowflake_table.users.name
 }
 
 output "create_user_procedure" {

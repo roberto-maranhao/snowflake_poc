@@ -18,7 +18,7 @@ resource "snowflake_procedure" "get_user_order_history" {
     DECLARE
         result_cursor CURSOR FOR 
             SELECT ID, TOTAL_AMOUNT, STATUS, CREATED_AT 
-            FROM ${snowflake_table.orders.qualified_name}
+            FROM ${var.database_name}.${var.schema_name}.${snowflake_table.orders.name}
             WHERE USER_ID = USER_ID_PARAM
             ORDER BY CREATED_AT DESC;
     BEGIN

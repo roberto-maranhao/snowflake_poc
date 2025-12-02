@@ -5,5 +5,5 @@ output "user_orders_summary_view" {
 
 output "user_orders_summary_view_name" {
   description = "Full qualified name of user orders summary view"
-  value       = snowflake_view.user_orders_summary.qualified_name
+  value       = snowflake_view.user_orders_summary.name
 }

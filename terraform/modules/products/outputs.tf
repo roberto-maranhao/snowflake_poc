@@ -5,7 +5,7 @@ output "products_table" {
 
 output "products_table_name" {
   description = "Full qualified name of products table"
-  value       = snowflake_table.products.qualified_name
+  value       = snowflake_table.products.name
 }
 
 output "calculate_tax_function" {

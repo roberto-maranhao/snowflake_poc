@@ -51,59 +51,73 @@ resource "snowflake_schema" "schemas" {
 }
 
 # Roles
-resource "snowflake_role" "app_role" {
+resource "snowflake_account_role" "app_role" {
   name    = "${upper(var.environment)}_APP_ROLE"
   comment = "Application role for ${var.environment} environment"
 }
 
-resource "snowflake_role" "read_role" {
+resource "snowflake_account_role" "read_role" {
   name    = "${upper(var.environment)}_READ_ROLE"
   comment = "Read-only role for ${var.environment} environment"
 }
 
-# Database grants
-resource "snowflake_database_grant" "app_role_usage" {
-  database_name = snowflake_database.main.name
-  privilege     = "USAGE"
-  roles         = [snowflake_role.app_role.name]
+# Database privileges
+resource "snowflake_grant_privileges_to_account_role" "app_role_database_usage" {
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.main.name
+  }
 }
 
-resource "snowflake_database_grant" "read_role_usage" {
-  database_name = snowflake_database.main.name
-  privilege     = "USAGE"
-  roles         = [snowflake_role.read_role.name]
+resource "snowflake_grant_privileges_to_account_role" "read_role_database_usage" {
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.main.name
+  }
 }
 
-# Schema grants
-resource "snowflake_schema_grant" "app_role_all_privileges" {
+# Schema privileges
+resource "snowflake_grant_privileges_to_account_role" "app_role_schema_all" {
   for_each = toset(var.schemas)
   
-  database_name = snowflake_database.main.name
-  schema_name   = snowflake_schema.schemas[each.value].name
-  privilege     = "ALL"
-  roles         = [snowflake_role.app_role.name]
+  privileges        = ["ALL"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_schema {
+    schema_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas[each.value].name}\""
+  }
 }
 
-resource "snowflake_schema_grant" "read_role_usage" {
+resource "snowflake_grant_privileges_to_account_role" "read_role_schema_usage" {
   for_each = toset(var.schemas)
   
-  database_name = snowflake_database.main.name
-  schema_name   = snowflake_schema.schemas[each.value].name
-  privilege     = "USAGE"
-  roles         = [snowflake_role.read_role.name]
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_schema {
+    schema_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas[each.value].name}\""
+  }
 }
 
-# Warehouse grants
-resource "snowflake_warehouse_grant" "app_role_usage" {
-  warehouse_name = snowflake_warehouse.main.name
-  privilege      = "USAGE"
-  roles          = [snowflake_role.app_role.name]
+# Warehouse privileges
+resource "snowflake_grant_privileges_to_account_role" "app_role_warehouse_usage" {
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.main.name
+  }
 }
 
-resource "snowflake_warehouse_grant" "read_role_usage" {
-  warehouse_name = snowflake_warehouse.main.name
-  privilege      = "USAGE"
-  roles          = [snowflake_role.read_role.name]
+resource "snowflake_grant_privileges_to_account_role" "read_role_warehouse_usage" {
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.main.name
+  }
 }
 
 # Domain Modules - Tables and Functions

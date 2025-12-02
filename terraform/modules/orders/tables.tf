@@ -53,17 +53,26 @@ resource "snowflake_table" "orders" {
       constant = "CURRENT_TIMESTAMP()"
     }
   }
+}
 
-  primary_key {
-    name = "PK_ORDERS"
-    keys = ["ID"]
-  }
+# Primary key constraint on orders table
+resource "snowflake_table_constraint" "orders_primary_key" {
+  name     = "PK_ORDERS"
+  type     = "PRIMARY KEY"
+  table_id = "${var.database_name}.${var.schema_name}.${snowflake_table.orders.name}"
+  columns  = ["ID"]
+}
 
-  # Foreign key constraint to users table
-  foreign_key {
-    name           = "FK_ORDERS_USER_ID"
-    columns        = ["USER_ID"]
-    referenced_table_name   = var.users_table_name
-    referenced_columns      = ["ID"]
+# Foreign key constraint to users table
+resource "snowflake_table_constraint" "orders_user_fk" {
+  name     = "FK_ORDERS_USER_ID"
+  type     = "FOREIGN KEY"
+  table_id = "${var.database_name}.${var.schema_name}.${snowflake_table.orders.name}"
+  columns  = ["USER_ID"]
+  foreign_key_properties {
+    references {
+      table_id = "${var.database_name}.${var.schema_name}.${var.users_table_name}"
+      columns  = ["ID"]
+    }
   }
 }

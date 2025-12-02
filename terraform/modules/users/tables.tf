@@ -50,17 +50,20 @@ resource "snowflake_table" "users" {
       constant = "CURRENT_TIMESTAMP()"
     }
   }
+}
 
-  primary_key {
-    name = "PK_USERS"
-    keys = ["ID"]
-  }
+# Primary key constraint on users table
+resource "snowflake_table_constraint" "users_primary_key" {
+  name     = "PK_USERS"
+  type     = "PRIMARY KEY"
+  table_id = "${var.database_name}.${var.schema_name}.${snowflake_table.users.name}"
+  columns  = ["ID"]
 }
 
 # Unique constraint on users email
 resource "snowflake_table_constraint" "users_email_unique" {
   name     = "UQ_USERS_EMAIL"
   type     = "UNIQUE"
-  table_id = snowflake_table.users.qualified_name
+  table_id = "${var.database_name}.${var.schema_name}.${snowflake_table.users.name}"
   columns  = ["EMAIL"]
 }

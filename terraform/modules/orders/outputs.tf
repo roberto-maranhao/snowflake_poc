@@ -5,7 +5,7 @@ output "orders_table" {
 
 output "orders_table_name" {
   description = "Full qualified name of orders table"
-  value       = snowflake_table.orders.qualified_name
+  value       = snowflake_table.orders.name
 }
 
 output "get_user_order_history_procedure" {

@@ -15,12 +15,12 @@ output "schemas" {
 
 output "app_role_name" {
   description = "Application role name"
-  value       = snowflake_role.app_role.name
+  value       = snowflake_account_role.app_role.name
 }
 
 output "read_role_name" {
   description = "Read role name"
-  value       = snowflake_role.read_role.name
+  value       = snowflake_account_role.read_role.name
 }
 
 output "resource_monitor_name" {
@@ -46,5 +46,5 @@ output "orders_table_name" {
 
 output "views" {
   description = "Available views"
-  value       = module.views.view_names
+  value       = [module.views.user_orders_summary_view_name]
 }

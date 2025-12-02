@@ -1,5 +1,10 @@
-variable "snowflake_account" {
-  description = "Snowflake account identifier"
+variable "snowflake_account_name" {
+  description = "Snowflake account name (without organization prefix)"
+  type        = string
+}
+
+variable "snowflake_organization_name" {
+  description = "Snowflake organization name"
   type        = string
 }
 
@@ -14,8 +19,8 @@ variable "snowflake_password" {
   sensitive   = true
 }
 
-variable "snowflake_region" {
-  description = "Snowflake region"
+variable "snowflake_role" {
+  description = "Snowflake role to use"
   type        = string
-  default     = ""
+  default     = "SYSADMIN"
 }
