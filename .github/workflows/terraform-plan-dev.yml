@@ -59,8 +59,8 @@ jobs:
         terraform plan -out=tfplan
       env:
         TF_VAR_environment: "dev"
-        TF_VAR_database_name: "SNOWFLAKE_DEV"
-        TF_VAR_warehouse_name: "COMPUTE_WH_DEV"
+        TF_VAR_database_name: "DEV_DB"
+        TF_VAR_warehouse_name: "DEV_WH"
         TF_VAR_warehouse_size: "X-SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
         TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT }}
@@ -73,8 +73,8 @@ jobs:
       run: terraform apply -auto-approve tfplan
       env:
         TF_VAR_environment: "dev"
-        TF_VAR_database_name: "SNOWFLAKE_DEV"
-        TF_VAR_warehouse_name: "COMPUTE_WH_DEV"
+        TF_VAR_database_name: "DEV_DB"
+        TF_VAR_warehouse_name: "DEV_WH"
         TF_VAR_warehouse_size: "X-SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
         TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_DEV_ACCOUNT }}

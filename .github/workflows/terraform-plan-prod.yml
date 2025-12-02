@@ -69,8 +69,8 @@ jobs:
         terraform plan -out=tfplan
       env:
         TF_VAR_environment: "prod"
-        TF_VAR_database_name: "SNOWFLAKE_PROD"
-        TF_VAR_warehouse_name: "COMPUTE_WH_PROD"
+        TF_VAR_database_name: "PROD_DB"
+        TF_VAR_warehouse_name: "PROD_WH"
         TF_VAR_warehouse_size: "SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
         TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
@@ -83,8 +83,8 @@ jobs:
       run: terraform apply -auto-approve tfplan
       env:
         TF_VAR_environment: "prod"
-        TF_VAR_database_name: "SNOWFLAKE_PROD"
-        TF_VAR_warehouse_name: "COMPUTE_WH_PROD"
+        TF_VAR_database_name: "PROD_DB"
+        TF_VAR_warehouse_name: "PROD_WH"
         TF_VAR_warehouse_size: "SMALL"
         TF_VAR_schemas: '["PUBLIC"]'
         TF_VAR_snowflake_account_name: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
