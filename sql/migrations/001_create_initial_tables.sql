@@ -31,4 +31,4 @@ CREATE TABLE IF NOT EXISTS orders (
     created_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
     updated_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
     FOREIGN KEY (user_id) REFERENCES users(id)
-);
+);-- GitHub Actions test
