@@ -76,4 +76,3 @@ jobs:
         TF_VAR_snowflake_organization_name: ${{ secrets.SNOWFLAKE_PROD_ORGANIZATION_NAME }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
