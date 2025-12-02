@@ -1,8 +1,13 @@
 name: 'Terraform Deploy - Production'
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
+      - '.github/workflows/terraform-*.yml'
   pull_request:
-    branches: [ prod ]
+    branches: [ main ]
     paths:
       - 'terraform/**'
       - '.github/workflows/terraform-*.yml'
