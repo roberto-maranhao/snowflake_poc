@@ -1,0 +1,78 @@
+name: 'Terraform Deploy - Production'
+
+on:
+  pull_request:
+    branches: [ production ]
+    paths:
+      - 'terraform/**'
+      - 'sql/**'
+      - '.github/workflows/terraform-*.yml'
+
+env:
+  TF_VERSION: 1.6.0
+
+jobs:
+  terraform-deploy-prod:
+    name: 'Terraform Deploy Prod'
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+        working-directory: terraform/environments/prod
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TF_VERSION }}
+    
+    - name: Terraform Format Check
+      run: terraform fmt -check -recursive
+    
+    - name: Terraform Init
+      run: terraform init
+      env:
+        TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
+        TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
+        TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
+        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
+    
+    - name: Terraform Validate
+      run: terraform validate
+    
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+      env:
+        TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
+        TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
+        TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
+        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
+    
+    - name: Manual Approval Required
+      uses: trstringer/manual-approval@v1
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: ${{ secrets.PROD_APPROVERS }}
+        minimum-approvals: 1
+        issue-title: "Production Deployment Approval Required"
+        issue-body: "Please review the Terraform plan and approve this production deployment."
+    
+    - name: Terraform Apply
+      run: terraform apply -auto-approve tfplan
+      env:
+        TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
+        TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
+        TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
+        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
+        
+    - name: Deploy SQL Files
+      run: |
+        echo "Deploying SQL files to production environment..."
+        find ../../../sql -name "*.sql" -type f | while read file; do
+          echo "Processing SQL file: $file"
+        done

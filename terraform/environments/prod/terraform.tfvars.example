@@ -1,0 +1,12 @@
+# This file is no longer needed!
+# All configuration is handled through GitHub repository secrets.
+# 
+# Required GitHub Repository Secrets:
+# - SNOWFLAKE_PROD_ACCOUNT
+# - SNOWFLAKE_PROD_USERNAME  
+# - SNOWFLAKE_PROD_PASSWORD
+# - SNOWFLAKE_PROD_ROLE
+# - PROD_APPROVERS (comma-separated GitHub usernames)
+#
+# These are automatically passed as TF_VAR_* environment variables
+# in the GitHub Actions workflows.

@@ -1,0 +1,11 @@
+# This file is no longer needed!
+# All configuration is handled through GitHub repository secrets.
+# 
+# Required GitHub Repository Secrets:
+# - SNOWFLAKE_DEV_ACCOUNT
+# - SNOWFLAKE_DEV_USERNAME  
+# - SNOWFLAKE_DEV_PASSWORD
+# - SNOWFLAKE_DEV_ROLE
+#
+# These are automatically passed as TF_VAR_* environment variables
+# in the GitHub Actions workflows.

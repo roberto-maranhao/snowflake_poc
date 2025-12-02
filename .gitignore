@@ -1,0 +1,44 @@
+# Environment files
+.env
+*.tfvars
+!*.tfvars.example
+
+# Terraform files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfplan
+tfplan
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node modules (if using any Node.js tools)
+node_modules/
+
+# Snowflake CLI config (if using SnowSQL)
+.snowsql/
