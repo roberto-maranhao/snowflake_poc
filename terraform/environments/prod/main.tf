@@ -1,13 +1,11 @@
 terraform {
-  backend "s3" {
-    # Configure your S3 backend here
-    # bucket = "your-terraform-state-bucket"
-    # key    = "snowflake-poc/prod/terraform.tfstate"
-    # region = "us-east-1"
-
-    # Alternative: use local backend for development
-    # Remove the backend block to use local state
-  }
+  # Using local backend for development
+  # For production, configure S3 backend:
+  # backend "s3" {
+  #   bucket = "your-terraform-state-bucket"
+  #   key    = "snowflake-poc/prod/terraform.tfstate"
+  #   region = "us-east-1"
+  # }
 }
 
 # Include the main terraform configuration
