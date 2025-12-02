@@ -40,7 +40,6 @@ jobs:
         TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
     
     - name: Terraform Validate
       run: terraform validate
@@ -51,7 +50,6 @@ jobs:
         TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
     
     - name: Manual Approval Required
       uses: trstringer/manual-approval@v1
@@ -68,7 +66,6 @@ jobs:
         TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
-        TF_VAR_snowflake_role: ${{ secrets.SNOWFLAKE_PROD_ROLE }}
         
     - name: Deploy SQL Files
       run: |

@@ -14,12 +14,6 @@ variable "snowflake_password" {
   sensitive   = true
 }
 
-variable "snowflake_role" {
-  description = "Snowflake role"
-  type        = string
-  default     = "SYSADMIN"
-}
-
 variable "snowflake_region" {
   description = "Snowflake region"
   type        = string
