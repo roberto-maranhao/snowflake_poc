@@ -4,7 +4,7 @@ resource "snowflake_view" "user_orders_summary" {
   schema   = var.schema_name
   name     = "USER_ORDERS_SUMMARY"
   comment  = "Summary view of user orders with aggregated statistics"
-  
+
   statement = <<-SQL
     SELECT 
         u.ID as USER_ID,
