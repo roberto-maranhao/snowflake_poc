@@ -61,6 +61,9 @@ jobs:
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
         TF_VAR_snowflake_role: "TERRAFORM_PROD_ROLE"
     
+    - name: Terraform Init
+      run: terraform init
+      
     - name: Terraform Validate
       run: terraform validate
     
