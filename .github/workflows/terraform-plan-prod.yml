@@ -2,7 +2,7 @@ name: 'Terraform Deploy - Production'
 
 on:
   pull_request:
-    branches: [ production ]
+    branches: [ prod ]
     paths:
       - 'terraform/**'
       - 'sql/**'

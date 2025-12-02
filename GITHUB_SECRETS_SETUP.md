@@ -49,7 +49,7 @@ You need to add the following secrets to your GitHub repository. Go to:
    - Click **Add rule** or **Add protection rule**
 
 2. **Configure Protection Rule**:
-   - **Branch name pattern**: `production`
+   - **Branch name pattern**: `prod`
    - ✅ **Require a pull request before merging**
    - ✅ **Require reviews before merging** (set to 1 or more)
    - ✅ **Dismiss stale PR reviews when new commits are pushed**
@@ -70,7 +70,7 @@ You need to add the following secrets to your GitHub repository. Go to:
    - **Name**: `production`
    - ✅ **Required reviewers**: Add GitHub usernames or teams
    - ✅ **Wait timer**: Optional delay before deployment
-   - ✅ **Deployment branches**: Only `production` branch
+   - ✅ **Deployment branches**: Only `prod` branch
 
 ### 🎯 Benefits of GitHub Native Protection
 
@@ -119,11 +119,11 @@ After configuring secrets:
 
 3. **Create development and production branches**:
    ```bash
-   git checkout -b development
-   git push -u origin development
+   git checkout -b dev
+   git push -u origin dev
    
-   git checkout -b production  
-   git push -u origin production
+   git checkout -b prod  
+   git push -u origin prod
    ```
 
 4. **Test with a PR** to verify the automation and protection works

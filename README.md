@@ -28,8 +28,8 @@ snowflake_poc/
 ## Branch Strategy
 
 - `main`: Main branch for general development
-- `development`: Development environment branch - merges trigger dev deployments
-- `production`: Production environment branch - merges trigger prod deployments
+- `dev`: Development environment branch - merges trigger dev deployments
+- `prod`: Production environment branch - merges trigger prod deployments
 
 ## Terraform Setup
 
@@ -115,10 +115,10 @@ Configure these secrets in your GitHub repository settings:
 ### Workflow Triggers
 
 #### Development Workflow
-- **Deploy**: Triggered on PR to `development` branch (automatic apply)
+- **Deploy**: Triggered on PR to `dev` branch (automatic apply)
 
 #### Production Workflow
-- **Deploy**: Triggered on PR to `production` branch (requires manual approval before apply)
+- **Deploy**: Triggered on PR to `prod` branch (requires manual approval before apply)
 
 ## Resources Created
 
@@ -169,8 +169,8 @@ The repository includes example files:
    - Add SQL files in appropriate `sql/` subdirectories
 
 3. **Create Pull Request**:
-   - PR to `development` branch for development deployment
-   - PR to `production` branch for production deployment
+   - PR to `dev` branch for development deployment
+   - PR to `prod` branch for production deployment
 
 4. **Automatic Deployment**:
    - **Development**: GitHub Actions automatically applies changes on PR
@@ -184,11 +184,11 @@ The repository includes example files:
 
 1. **Development → Production**:
    ```bash
-   git checkout development
-   git pull origin development
-   git checkout production
-   git merge development
-   git push origin production
+   git checkout dev
+   git pull origin dev
+   git checkout prod
+   git merge dev
+   git push origin prod
    ```
 
 ## Security Best Practices
