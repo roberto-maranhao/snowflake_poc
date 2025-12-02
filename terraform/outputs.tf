@@ -27,3 +27,24 @@ output "resource_monitor_name" {
   description = "Resource monitor name (prod only)"
   value       = var.environment == "prod" ? snowflake_resource_monitor.main[0].name : null
 }
+
+# Module outputs
+output "users_table_name" {
+  description = "Name of the users table"
+  value       = module.users.users_table_name
+}
+
+output "products_table_name" {
+  description = "Name of the products table"
+  value       = module.products.products_table_name
+}
+
+output "orders_table_name" {
+  description = "Name of the orders table"
+  value       = module.orders.orders_table_name
+}
+
+output "views" {
+  description = "Available views"
+  value       = module.views.view_names
+}

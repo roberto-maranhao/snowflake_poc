@@ -1,77 +1,186 @@
-# Snowflake POC Repository
+# Snowflake Infrastructure with Terraform
 
-This repository contains Terraform infrastructure as code for managing Snowflake resources across development and production environments.
+This repository provides a modular Terraform infrastructure for managing Snowflake resources across multiple environments (dev/prod) with automated deployments via GitHub Actions.
 
-## Project Structure
+## Architecture
+
+### Modular Design
+The infrastructure is organized into domain-specific modules for better maintainability and separation of concerns:
 
 ```
-snowflake_poc/
-├── .github/workflows/          # GitHub Actions CI/CD workflows
-│   ├── terraform-plan-dev.yml  # Dev environment deploy on PR
-│   └── terraform-plan-prod.yml # Prod environment deploy on PR (with approval)
-├── sql/                        # SQL scripts organized by type
-│   ├── migrations/             # Database migrations
-│   ├── schemas/               # Schema definitions
-│   ├── procedures/            # Stored procedures
-│   ├── functions/             # User-defined functions
-│   └── views/                 # View definitions
-└── terraform/                 # Terraform configuration
-    ├── environments/          # Environment-specific configurations
-    │   ├── dev/              # Development environment
-    │   └── prod/             # Production environment
-    ├── main.tf               # Main Terraform configuration
-    ├── resources.tf          # Resource definitions
-    ├── outputs.tf            # Output values
-    └── variables.tf          # Variable definitions (moved to main.tf)
+terraform/
+├── main.tf              # Provider and backend configuration
+├── resources.tf         # Core infrastructure (database, warehouse, schemas, roles)
+├── outputs.tf           # Output definitions
+├── environments/        # Environment-specific configurations
+│   ├── dev.tfvars
+│   └── prod.tfvars
+└── modules/            # Domain-specific modules
+    ├── users/          # User management
+    │   ├── tables.tf
+    │   ├── procedures.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── products/       # Product catalog
+    │   ├── tables.tf
+    │   ├── functions.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    ├── orders/         # Order processing
+    │   ├── tables.tf
+    │   ├── procedures.tf
+    │   ├── variables.tf
+    │   └── outputs.tf
+    └── views/          # Analytics views
+        ├── views.tf
+        ├── variables.tf
+        └── outputs.tf
 ```
 
-## Branch Strategy
+### Module Dependencies
+The modules have clear dependency relationships:
+- **Users**: Standalone module with user management
+- **Products**: Standalone module with product catalog and pricing functions
+- **Orders**: Depends on Users module (foreign key relationship)
+- **Views**: Depends on Users, Products, and Orders modules (joins data across tables)
 
-- `main`: Main branch for general development
-- `dev`: Development environment branch - merges trigger dev deployments
-- `prod`: Production environment branch - merges trigger prod deployments
+## Environments
 
-## Terraform Setup
+### Development Environment
+- Database: `SNOWFLAKE_DEV`
+- Warehouse: `COMPUTE_WH_DEV` (X-Small)
+- Data retention: 30 days
+- Single cluster warehouse
+- No resource monitor
 
-### Prerequisites
+### Production Environment
+- Database: `SNOWFLAKE_PROD`
+- Warehouse: `COMPUTE_WH_PROD` (Small)
+- Data retention: 90 days
+- Auto-scaling warehouse (1-3 clusters)
+- Resource monitor with credit limits and notifications
 
-1. **Terraform >= 1.6.0**
-2. **Snowflake account with appropriate permissions**
-3. **Git repository secrets configured**
+## Database Schema
 
-### Environment Configuration
+### Users Module
+- **USERS table**: User management with email uniqueness
+- **CREATE_USER procedure**: User creation with validation
 
-**⚠️ Important: No Local Credentials Required!**
+### Products Module
+- **PRODUCTS table**: Product catalog with pricing
+- **CALCULATE_TAX function**: Tax calculation utility
+- **GET_PRODUCT_PRICE function**: Price lookup utility
 
-All authentication is handled through GitHub repository secrets. You do not need to store any Snowflake credentials locally.
+### Orders Module  
+- **ORDERS table**: Order processing with foreign key to users
+- **GET_USER_ORDER_HISTORY procedure**: Order history retrieval
 
-#### For Local Development/Testing (Optional)
+### Views Module
+- **USER_ORDERS_SUMMARY view**: Aggregated analytics view joining users and orders
 
-If you want to test Terraform configurations locally:
+## Deployment
 
-1. Navigate to the environment directory:
+### Automated CI/CD
+GitHub Actions workflows handle automated deployments:
+
+#### Development Deployment
+- **Trigger**: Push to `dev` branch
+- **Workflow**: `.github/workflows/terraform-plan-dev.yml`
+- **Process**: Terraform plan and apply automatically
+
+#### Production Deployment
+- **Trigger**: Push to `main` branch  
+- **Workflow**: `.github/workflows/terraform-plan-prod.yml`
+- **Process**: Terraform plan and apply automatically
+- **Protection**: GitHub branch protection recommended for `main` branch
+
+### Manual Deployment
+
+1. **Initialize Terraform**:
    ```bash
-   cd terraform/environments/dev  # or prod
-   ```
-
-2. Create a local terraform.tfvars file (not committed to git):
-   ```bash
-   # This file is git-ignored for security
-   cat > terraform.tfvars << EOF
-   snowflake_account  = "your-account.region.snowflakecomputing.com"
-   snowflake_username = "your-username"
-   snowflake_password = "your-password"
-   snowflake_role     = "SYSADMIN"
-   EOF
-   ```
-
-3. Initialize and plan:
-   ```bash
+   cd terraform
    terraform init
-   terraform plan
    ```
 
-**Production deployments should only be done through GitHub Actions workflows.**
+2. **Plan Deployment**:
+   ```bash
+   # Development
+   terraform plan -var-file="environments/dev.tfvars"
+   
+   # Production  
+   terraform plan -var-file="environments/prod.tfvars"
+   ```
+
+3. **Apply Changes**:
+   ```bash
+   # Development
+   terraform apply -var-file="environments/dev.tfvars"
+   
+   # Production
+   terraform apply -var-file="environments/prod.tfvars"
+   ```
+
+## Configuration
+
+### Required Secrets
+Configure these secrets in GitHub repository settings:
+
+- `SNOWFLAKE_USER`: Snowflake username
+- `SNOWFLAKE_PASSWORD`: Snowflake password  
+- `SNOWFLAKE_ACCOUNT`: Snowflake account identifier
+- `SNOWFLAKE_REGION`: Snowflake region
+
+### Environment Variables
+Each environment has its own variable file:
+
+- `terraform/environments/dev.tfvars`
+- `terraform/environments/prod.tfvars`
+
+Customize database names, warehouse sizes, and other environment-specific settings in these files.
+
+## Security
+
+### Role-Based Access Control
+- **APP_ROLE**: Full privileges for application use
+- **READ_ROLE**: Read-only access for reporting and analytics
+
+### Data Retention
+- Development: 30 days
+- Production: 90 days
+
+### Resource Monitoring
+Production environment includes credit monitoring with:
+- Notifications at 80% and 90% usage
+- Suspension at 95% usage
+- Immediate suspension at 100% usage
+
+## Contributing
+
+1. Create feature branch from `dev`
+2. Make changes to Terraform modules
+3. Test in development environment
+4. Create pull request to `dev` branch
+5. After testing, merge to `main` for production deployment
+
+## Best Practices
+
+### Module Development
+- Keep modules focused on single domains
+- Use clear variable names and descriptions
+- Include comprehensive outputs for inter-module communication
+- Establish explicit dependencies using `depends_on`
+
+### Environment Management
+- Always test changes in dev environment first
+- Use environment-specific variable files
+- Maintain separate state files for each environment
+- Review Terraform plans before applying
+
+### Security
+- Rotate Snowflake credentials regularly
+- Use least privilege access principles
+- Monitor resource usage and costs
+- Review access grants periodically
 
 ### Manual Deployment
 
@@ -129,6 +238,10 @@ The Terraform configuration creates the following Snowflake resources:
 - **Warehouse**: `DEV_WH` (X-SMALL)
 - **Schemas**: `PUBLIC`, `STAGING`, `ANALYTICS`, `TESTING`
 - **Roles**: `DEV_APP_ROLE`, `DEV_READ_ROLE`
+- **Tables**: `USERS`, `PRODUCTS`, `ORDERS`
+- **Views**: `USER_ORDERS_SUMMARY`
+- **Functions**: `CALCULATE_ORDER_TOTAL_WITH_TAX`, `CALCULATE_ORDER_TOTAL_WITH_DEFAULT_TAX`
+- **Procedures**: `GET_USER_ORDER_HISTORY`, `CREATE_USER`
 
 ### Production Environment
 - **Database**: `PROD_DB`
@@ -136,24 +249,30 @@ The Terraform configuration creates the following Snowflake resources:
 - **Schemas**: `PUBLIC`, `STAGING`, `ANALYTICS`
 - **Roles**: `PROD_APP_ROLE`, `PROD_READ_ROLE`
 - **Resource Monitor**: `PROD_WH_MONITOR` (1000 credit limit)
+- **Tables**: `USERS`, `PRODUCTS`, `ORDERS`
+- **Views**: `USER_ORDERS_SUMMARY`
+- **Functions**: `CALCULATE_ORDER_TOTAL_WITH_TAX`, `CALCULATE_ORDER_TOTAL_WITH_DEFAULT_TAX`
+- **Procedures**: `GET_USER_ORDER_HISTORY`, `CREATE_USER`
 
-## SQL File Management
+## Declarative Schema Management
 
-SQL files in the `sql/` directory are organized by type:
+All database objects (tables, views, functions, procedures) are defined as Terraform resources. This means:
 
-- **migrations/**: Version-controlled database changes (numbered for order)
-- **schemas/**: Schema creation and modification scripts
-- **procedures/**: Stored procedure definitions
-- **functions/**: User-defined function definitions
-- **views/**: View definitions
+### Adding a Column
+```hcl
+# In terraform/tables.tf, add to any table:
+column {
+  name     = "NEW_COLUMN"
+  type     = "VARCHAR(100)"
+  nullable = true
+}
+```
 
-### Example SQL Files
-
-The repository includes example files:
-- `001_create_initial_tables.sql`: Creates users, products, and orders tables
-- `user_orders_summary.sql`: View for user order summaries
-- `get_user_order_history.sql`: Stored procedure for order history
-- `calculate_order_total_with_tax.sql`: Function for tax calculations
+### Modifying a Table
+- **Add columns**: Add column blocks to the resource
+- **Change column types**: Modify the type in the column definition
+- **Add constraints**: Use primary_key, foreign_key, or table_constraint resources
+- **Terraform handles the DDL**: Automatically generates ALTER TABLE statements
 
 ## Development Workflow
 

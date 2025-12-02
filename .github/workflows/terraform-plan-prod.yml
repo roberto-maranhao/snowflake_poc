@@ -5,7 +5,6 @@ on:
     branches: [ prod ]
     paths:
       - 'terraform/**'
-      - 'sql/**'
       - '.github/workflows/terraform-*.yml'
 
 env:
@@ -57,10 +56,3 @@ jobs:
         TF_VAR_snowflake_account: ${{ secrets.SNOWFLAKE_PROD_ACCOUNT }}
         TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
         TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
-        
-    - name: Deploy SQL Files
-      run: |
-        echo "Deploying SQL files to production environment..."
-        find ../../../sql -name "*.sql" -type f | while read file; do
-          echo "Processing SQL file: $file"
-        done

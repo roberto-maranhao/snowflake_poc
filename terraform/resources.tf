@@ -105,3 +105,65 @@ resource "snowflake_warehouse_grant" "read_role_usage" {
   privilege      = "USAGE"
   roles          = [snowflake_role.read_role.name]
 }
+
+# Domain Modules - Tables and Functions
+
+# Users module
+module "users" {
+  source = "./modules/users"
+  
+  database_name = snowflake_database.main.name
+  schema_name   = snowflake_schema.schemas["PUBLIC"].name
+  
+  depends_on = [
+    snowflake_database.main,
+    snowflake_schema.schemas
+  ]
+}
+
+# Products module  
+module "products" {
+  source = "./modules/products"
+  
+  database_name = snowflake_database.main.name
+  schema_name   = snowflake_schema.schemas["PUBLIC"].name
+  
+  depends_on = [
+    snowflake_database.main,
+    snowflake_schema.schemas
+  ]
+}
+
+# Orders module (depends on users)
+module "orders" {
+  source = "./modules/orders"
+  
+  database_name    = snowflake_database.main.name
+  schema_name      = snowflake_schema.schemas["PUBLIC"].name
+  users_table_name = module.users.users_table_name
+  
+  depends_on = [
+    snowflake_database.main,
+    snowflake_schema.schemas,
+    module.users
+  ]
+}
+
+# Views module (depends on all table modules)
+module "views" {
+  source = "./modules/views"
+  
+  database_name      = snowflake_database.main.name
+  schema_name        = snowflake_schema.schemas["PUBLIC"].name
+  users_table_name   = module.users.users_table_name
+  orders_table_name  = module.orders.orders_table_name
+  products_table_name = module.products.products_table_name
+  
+  depends_on = [
+    snowflake_database.main,
+    snowflake_schema.schemas,
+    module.users,
+    module.products,
+    module.orders
+  ]
+}
