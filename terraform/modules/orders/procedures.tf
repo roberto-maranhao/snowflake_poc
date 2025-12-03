@@ -10,7 +10,7 @@ resource "snowflake_procedure_sql" "get_user_order_history" {
     arg_data_type = "NUMBER(38,0)"
   }
 
-  return_type = "TABLE(ORDER_ID NUMBER(38,0), TOTAL_AMOUNT DECIMAL(10,2), STATUS VARCHAR(50), CREATED_AT TIMESTAMP_NTZ)"
+  return_type = "TABLE(ORDER_ID NUMBER, TOTAL_AMOUNT DECIMAL, STATUS VARCHAR, CREATED_AT TIMESTAMP_NTZ)"
 
   procedure_definition = <<-SQL
     DECLARE
