@@ -181,3 +181,71 @@ module "views" {
     module.orders
   ]
 }
+
+# Table privileges for APP_ROLE
+resource "snowflake_grant_privileges_to_account_role" "app_role_users_table" {
+  privileges        = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.users.users_table_name}\""
+  }
+
+  depends_on = [module.users]
+}
+
+resource "snowflake_grant_privileges_to_account_role" "app_role_products_table" {
+  privileges        = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.products.products_table_name}\""
+  }
+
+  depends_on = [module.products]
+}
+
+resource "snowflake_grant_privileges_to_account_role" "app_role_orders_table" {
+  privileges        = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+  account_role_name = snowflake_account_role.app_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.orders.orders_table_name}\""
+  }
+
+  depends_on = [module.orders]
+}
+
+# Table privileges for READ_ROLE
+resource "snowflake_grant_privileges_to_account_role" "read_role_users_table" {
+  privileges        = ["SELECT"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.users.users_table_name}\""
+  }
+
+  depends_on = [module.users]
+}
+
+resource "snowflake_grant_privileges_to_account_role" "read_role_products_table" {
+  privileges        = ["SELECT"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.products.products_table_name}\""
+  }
+
+  depends_on = [module.products]
+}
+
+resource "snowflake_grant_privileges_to_account_role" "read_role_orders_table" {
+  privileges        = ["SELECT"]
+  account_role_name = snowflake_account_role.read_role.name
+  on_schema_object {
+    object_type = "TABLE"
+    object_name = "\"${snowflake_database.main.name}\".\"${snowflake_schema.schemas["PUBLIC"].name}\".\"${module.orders.orders_table_name}\""
+  }
+
+  depends_on = [module.orders]
+}
