@@ -63,6 +63,9 @@ jobs:
         terraform import snowflake_database.main "PROD_DB" || echo "Database import failed or already imported"
         # Import existing warehouse if it exists  
         terraform import snowflake_warehouse.main "PROD_WH" || echo "Warehouse import failed or already imported"
+        # Import existing roles if they exist
+        terraform import snowflake_account_role.app_role "PROD_APP_ROLE" || echo "App role import failed or already imported"
+        terraform import snowflake_account_role.read_role "PROD_READ_ROLE" || echo "Read role import failed or already imported"
       env:
         TF_VAR_environment: "prod"
         TF_VAR_database_name: "PROD_DB"
