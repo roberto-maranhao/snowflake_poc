@@ -56,6 +56,24 @@ jobs:
       
     - name: Terraform Validate
       run: terraform validate
+
+    - name: Import Existing Resources
+      run: |
+        # Import existing database if it exists
+        terraform import snowflake_database.main "PROD_DB" || echo "Database import failed or already imported"
+        # Import existing warehouse if it exists  
+        terraform import snowflake_warehouse.main "PROD_WH" || echo "Warehouse import failed or already imported"
+      env:
+        TF_VAR_environment: "prod"
+        TF_VAR_database_name: "PROD_DB"
+        TF_VAR_warehouse_name: "PROD_WH"
+        TF_VAR_warehouse_size: "SMALL"
+        TF_VAR_schemas: '["PUBLIC"]'
+        TF_VAR_snowflake_account_name: "MS87343"
+        TF_VAR_snowflake_organization_name: "JGRVRYQ"
+        TF_VAR_snowflake_username: ${{ secrets.SNOWFLAKE_PROD_USERNAME }}
+        TF_VAR_snowflake_password: ${{ secrets.SNOWFLAKE_PROD_PASSWORD }}
+        TF_VAR_snowflake_role: "TERRAFORM_PROD_ROLE"
     
     - name: Terraform Plan
       run: |
