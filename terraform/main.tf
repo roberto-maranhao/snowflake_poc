@@ -1,3 +1,5 @@
+# Terraform configuration for Snowflake infrastructure
+# Updated setup script with clean ownership grants
 terraform {
   required_version = ">= 1.0"
 
