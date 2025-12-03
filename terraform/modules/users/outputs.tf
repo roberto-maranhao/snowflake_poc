@@ -10,5 +10,5 @@ output "users_table_name" {
 
 output "create_user_procedure" {
   description = "Create user procedure resource"
-  value       = snowflake_procedure.create_user
+  value       = snowflake_procedure_sql.create_user
 }

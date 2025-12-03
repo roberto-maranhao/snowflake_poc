@@ -10,10 +10,10 @@ output "products_table_name" {
 
 output "calculate_tax_function" {
   description = "Calculate tax function resource"
-  value       = snowflake_function.calculate_order_total_with_tax
+  value       = snowflake_function_sql.calculate_order_total_with_tax
 }
 
 output "calculate_default_tax_function" {
   description = "Calculate default tax function resource"
-  value       = snowflake_function.calculate_order_total_with_default_tax
+  value       = snowflake_function_sql.calculate_order_total_with_default_tax
 }

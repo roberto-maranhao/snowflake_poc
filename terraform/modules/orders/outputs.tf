@@ -10,5 +10,5 @@ output "orders_table_name" {
 
 output "get_user_order_history_procedure" {
   description = "Get user order history procedure resource"
-  value       = snowflake_procedure.get_user_order_history
+  value       = snowflake_procedure_sql.get_user_order_history
 }
